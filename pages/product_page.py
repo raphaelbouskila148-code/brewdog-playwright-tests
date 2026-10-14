@@ -20,5 +20,15 @@ class ProductPage(BasePage):
             "button", name=re.compile(r"add to (cart|basket)", re.IGNORECASE)
         ).first
 
-    def add_to_cart(self):
+        # Quantity "+" buttons. On BrewDog the quantity starts at 0, so a
+        # customer has to press "+" before "Add to basket" adds anything.
+        self.increase_quantity_button = page.locator("main").get_by_role(
+            "button", name="Increase quantity"
+        ).first
+
+    def add_to_cart(self, quantity: int = 1):
+        """Choose a quantity with the '+' button (if the page has one), then add to basket."""
+        if self.increase_quantity_button.is_visible():
+            for _ in range(quantity):
+                self.increase_quantity_button.click()
         self.add_to_cart_button.click()
