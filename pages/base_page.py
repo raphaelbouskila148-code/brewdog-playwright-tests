@@ -36,8 +36,12 @@ class BasePage:
         return self
 
     def confirm_age(self):
-        """Click 'Confirm' on the age gate if it appears."""
-        self._click_if_visible(self.age_confirm_button)
+        """Click 'Confirm' on the age gate if it appears.
+
+        The gate is currently switched off on the live site (see
+        test_homepage.py), so this waits only briefly.
+        """
+        self._click_if_visible(self.age_confirm_button, timeout=1500)
 
     # ---------- helpers ----------
 

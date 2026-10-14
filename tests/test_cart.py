@@ -20,8 +20,8 @@ def test_new_visitor_cart_is_empty(page: Page):
 
 @pytest.mark.regression
 def test_add_product_to_cart(page: Page):
-    """TC-19: Adding a product from its page puts it in the cart."""
-    product = CollectionPage(page, "beer").open().open_first_product()
+    """TC-19: Adding an in-stock product from its page puts it in the cart."""
+    product = CollectionPage(page, "non-alcoholics").open().open_first_buyable_product()
     cart = CartPage(page)
     assert cart.item_count() == 0
 
@@ -33,7 +33,7 @@ def test_add_product_to_cart(page: Page):
 @pytest.mark.regression
 def test_added_product_appears_on_cart_page(page: Page):
     """TC-20: The product added to the cart is listed on the cart page."""
-    product = CollectionPage(page, "beer").open().open_first_product()
+    product = CollectionPage(page, "non-alcoholics").open().open_first_buyable_product()
     name = product.title.inner_text().strip()
     product.add_to_cart()
     cart = CartPage(page)

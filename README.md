@@ -16,17 +16,29 @@ This project continues my manual testing of the same site: I executed 246 test c
 
 | Area | Tests | What is checked |
 |---|---|---|
-| Homepage & age gate | 4 | Page loads, age gate is shown to new visitors, "Confirm" closes it and is remembered |
+| Homepage & age gate | 4 | Page loads; age-confirmation popup exists, is shown to new visitors, and closes on "Confirm" |
 | Shop categories | 7 | Beer, IPAs, Lagers, Variety Packs, Non-Alcoholics, Merch each list products; clicking a product opens it |
-| Product page | 3 | Name, price in USD and "Add to cart" button are shown |
-| Search | 3 | Results for "IPA"; clear message for no matches, with no unfilled template text |
-| Cart | 3 | New cart is empty; adding a product updates the cart and the cart page |
+| Product page | 3 | An in-stock product shows its name, a USD price and an enabled "Add to basket" button |
+| Search | 3 | Search box returns products for "IPA"; plain search links work; no-match searches tell the user |
+| Cart | 3 | New cart is empty; adding an in-stock product updates the cart and the cart page |
 | Footer | 4 | Shipping, Contact, Terms and Privacy links point to the right pages |
 | Mobile | 2 | Homepage and category pages fit an iPhone screen with no sideways scrolling |
 
 Tests are tagged so you can run just a group: `smoke` (quick health check), `regression` (deeper flows), `mobile`.
 
 > The tests never go to checkout or place an order.
+
+## Issues found by the automation
+
+The first runs of this suite found three issues on the live site. Each one is covered by a test marked **xfail** (expected to fail): it shows as a known issue in every report without turning the pipeline red, and will show as **XPASS** once BrewDog fixes it.
+
+| Issue | Impact | Test |
+|---|---|---|
+| **Search results page crashes** when the link has no `type=product` (e.g. `/search?q=IPA`). The page's product data is not valid JSON (an empty `"available"` value), so the results script throws a `SyntaxError` and the page stays on loading placeholders. | Shared or bookmarked search links show no results. The search box is not affected. | TC-16 |
+| **No "no results" message.** A search with no matches shows unrelated products and does not tell the user nothing was found. | Users may think unrelated products match their search. | TC-17 |
+| **Age gate is switched off.** The age-confirmation popup is built into every page, but its entry setting is disabled, so visitors are never asked to confirm their age. | Possible compliance risk for an alcohol retailer. | TC-03, TC-04 |
+
+Also noted while building the tests: beer can't be bought online in the US (beer pages show "Find Near You" instead of "Add to basket"), so product and cart tests use the first **in-stock** item in Non-Alcoholics.
 
 ## Tech stack
 

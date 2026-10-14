@@ -7,12 +7,13 @@ from pages.collection_page import CollectionPage
 
 @pytest.fixture
 def product(page: Page):
-    """Open the first product in the Beer category.
+    """Open the first in-stock product in the Non-Alcoholics category.
 
     Starting from the category (instead of a fixed product link) keeps the
-    tests working when BrewDog adds or removes products.
+    tests working when BrewDog adds, removes or sells out products. Beer is
+    not used here because it can't be bought online in the US.
     """
-    return CollectionPage(page, "beer").open().open_first_product()
+    return CollectionPage(page, "non-alcoholics").open().open_first_buyable_product()
 
 
 @pytest.mark.smoke
@@ -29,6 +30,7 @@ def test_product_page_shows_price_in_dollars(product):
 
 
 @pytest.mark.smoke
-def test_product_page_has_add_to_cart_button(product):
-    """TC-14: Product page has an 'Add to cart' button."""
+def test_product_page_has_add_to_basket_button(product):
+    """TC-14: An in-stock product has an enabled 'Add to basket' button."""
     expect(product.add_to_cart_button).to_be_visible()
+    expect(product.add_to_cart_button).to_be_enabled()
